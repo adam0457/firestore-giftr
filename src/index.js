@@ -2,13 +2,23 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyA11AtBsjU2Kr_TCGdySvB0IDt2XyfbB7E',
-  authDomain: 'stupid-first-project.firebaseapp.com',
-  projectId: 'stupid-first-project',
-  storageBucket: 'stupid-first-project.appspot.com',
-  messagingSenderId: '876050898658',
-  appId: '1:876050898658:web:d4d7add948d9a578b948bb',
+  apiKey: "AIzaSyDKvKz18ehgFqqQFsGYCF0Si_FMZgE6ZIM",
+  authDomain: "fire-giftr-cad6e.firebaseapp.com",
+  projectId: "fire-giftr-cad6e",
+  storageBucket: "fire-giftr-cad6e.appspot.com",
+  messagingSenderId: "416768678849",
+  appId: "1:416768678849:web:77f6c29fec81803b46ed40"
 };
+
+
+// const firebaseConfig = {
+//   apiKey: 'AIzaSyA11AtBsjU2Kr_TCGdySvB0IDt2XyfbB7E',
+//   authDomain: 'stupid-first-project.firebaseapp.com',
+//   projectId: 'stupid-first-project',
+//   storageBucket: 'stupid-first-project.appspot.com',
+//   messagingSenderId: '876050898658',
+//   appId: '1:876050898658:web:d4d7add948d9a578b948bb',
+// };
 //TODO: replace this config object with your own
 
 // Initialize Firebase
