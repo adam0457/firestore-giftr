@@ -1,3 +1,10 @@
+/**
+ * Student: Vladymir Adam
+ * Hybrid-Assignment: Firestore-Giftr
+ * mad9135 - 2022 
+ */
+
+
 'use strict';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, getDocs } from 'firebase/firestore';
@@ -20,9 +27,7 @@ const GIFTR = {
     let app = initializeApp(GIFTR.firebaseConfig);
     GIFTR.db = getFirestore(app); 
     GIFTR.getPeople();
-  },
-  // app : initializeApp(GIFTR.firebaseConfig),
-  // db : getFirestore(GIFTR.app), 
+  },  
   
   addListeners:() => {
         document.getElementById('btnCancelPerson').addEventListener('click', GIFTR.hideOverlay);
@@ -52,7 +57,7 @@ const GIFTR = {
 
   getPeople:async()=>{
       const querySnapshot = await getDocs(collection(GIFTR.db, 'people'));
-    querySnapshot.forEach((doc) => {
+      querySnapshot.forEach((doc) => {
       const data = doc.data();
       const id = doc.id;
       GIFTR.people.push({id, ...data});
@@ -61,9 +66,7 @@ const GIFTR = {
   },
 
   buildPeople:(people)=>{  
-  // let ul = document.querySelector('ul.person-list');  
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  // ul.innerHTML = people.map(person=>{
   GIFTR.personList.innerHTML = people.map(person=>{
     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
     //Use the number of the birth-month less 1 as the index for the months array
