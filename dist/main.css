@@ -79,6 +79,10 @@ ul {
   padding: 0.5rem 2rem;
   cursor: pointer;
 }
+
+.person-list li:hover {
+  background-color: var(--light-orange);
+}
 .person-list li.selected {
   background-color: var(--light-orange);
 }
