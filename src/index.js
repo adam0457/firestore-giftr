@@ -20,6 +20,7 @@ const GIFTR = {
   },
   personList:document.querySelector('ul.person-list'),
   ideaList: document.querySelector('ul.idea-list'),
+  selectedPersonId:null,
   name: null,
   month: null,
   day: null,
@@ -40,8 +41,41 @@ const GIFTR = {
       document.getElementById('btnAddPerson').addEventListener('click', GIFTR.showOverlay);
       document.getElementById('btnAddIdea').addEventListener('click', GIFTR.showOverlay);
       document.getElementById('btnSavePerson').addEventListener('click', GIFTR.savePerson);
+      document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.saveGiftIdea);
       GIFTR.personList.addEventListener('click', GIFTR.showListGifts);
   }, 
+
+  saveGiftIdea: async(ev) => {
+      let title = document.getElementById('title').value;
+      let location = document.getElementById('location').value;
+      if(!location || !title) return;
+      const giftIdea = {
+        'idea': title,
+        'location': location,
+        'person-id': GIFTR.selectedPersonId
+      };
+
+      try {
+        const docRef = await addDoc(collection(GIFTR.db, 'gift-ideas'), giftIdea );
+        console.log('Document written with ID: ', docRef.id);
+        //1. clear the form fields 
+        document.getElementById('title').value = '';
+        document.getElementById('location').value = '';
+        //2. hide the dialog and the overlay
+        GIFTR.hideOverlay();
+        //3. display a message to the user about success 
+        // tellUser(`Person ${GIFTR.name} added to database`);
+        console.log(`Idea ${title} added to database`);
+        giftIdea.id = docRef.id;
+        //4. ADD the new HTML to the <ul> using the new object
+        // GIFTR.showPerson(person);
+      } catch (err) {
+        console.error('Error adding document: ', err);
+        //do you want to stay on the dialog?
+        //display a mesage to the user about the problem
+      }
+      
+  },
   
   savePerson: async(ev) => {
     GIFTR.name = document.getElementById('name').value;
@@ -139,12 +173,12 @@ const GIFTR = {
 
   showListGifts: (ev) => {
     let selectedPerson = ev.target.closest('li');
-    let selectedPersonId = selectedPerson.getAttribute('data-id');    
+    GIFTR.selectedPersonId = selectedPerson.getAttribute('data-id');    
     let listeLi = document.querySelectorAll('.person-list li')
     listeLi.forEach(item =>  (item.classList.contains('selected')) ? item.classList.remove('selected') : "");    
     selectedPerson.classList.add('selected');
     //Call the list of ideas from firestore
-    GIFTR.getIdeas(selectedPersonId);
+    GIFTR.getIdeas(GIFTR.selectedPersonId);
   },
   getIdeas: async(id)=>{
           //get an actual reference to the person document 
