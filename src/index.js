@@ -4,10 +4,9 @@
  * mad9135 - 2022 
  */
 
-
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, getDocs } from 'firebase/firestore';
+import { query, where,getFirestore, collection, doc, getDocs } from 'firebase/firestore';
 
 const GIFTR = {
    /** My global variables */  
@@ -20,6 +19,7 @@ const GIFTR = {
     appId: "1:416768678849:web:77f6c29fec81803b46ed40"
   },
   personList:document.querySelector('ul.person-list'),
+  ideaList: document.querySelector('ul.idea-list'),
   people:[],
   db:null,
   init: () => {
@@ -83,6 +83,37 @@ const GIFTR = {
     let listeLi = document.querySelectorAll('.person-list li')
     listeLi.forEach(item =>  (item.classList.contains('selected')) ? item.classList.remove('selected') : "");    
     selectedPerson.classList.add('selected');
-  }
+    //Call the list of ideas from firestore
+    GIFTR.getIdeas(selectedPersonId);
+  },
+  getIdeas: async(id)=>{
+          //get an actual reference to the person document 
+      const personRef = doc(collection(GIFTR.db, 'people'), id);
+      //then run a query where the `person-id` property matches the reference for the person
+      const docs = query(
+        collection(GIFTR.db, 'gift-ideas'),
+        where('person-id', '==', personRef)
+      );
+      const querySnapshot = await getDocs(docs);
+      let ideas = [];
+
+      querySnapshot.forEach((doc) => { 
+        //work with the resulting docs
+        const data = doc.data();
+        const id = doc.id;
+        ideas.push({id, ...data});
+      });
+
+      GIFTR.buildListIdeas(ideas);
+  },
+  buildListIdeas: (ideas) => {
+    GIFTR.ideaList.innerHTML = ideas.map(item => {
+      return ` <li class="idea" data-id="">
+                    <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                    <p class="title">${item.idea}</p>
+                    <p class="location">${item.location}</p>
+              </li>`
+    });
+  },
 };
 GIFTR.init();
