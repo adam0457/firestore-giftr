@@ -75,7 +75,11 @@ const GIFTR = {
   },
 
   showListGifts: (ev) => {
-    console.log(ev.target.closest('li').getAttribute('data-id'));
+    let selectedPerson = ev.target.closest('li');
+    let selectedPersonId = selectedPerson.getAttribute('data-id');    
+    let listeLi = document.querySelectorAll('.person-list li')
+    listeLi.forEach(item =>  (item.classList.contains('selected')) ? item.classList.remove('selected') : "");    
+    selectedPerson.classList.add('selected');
   }
 };
 GIFTR.init();
