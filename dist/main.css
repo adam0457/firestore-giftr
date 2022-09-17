@@ -74,14 +74,38 @@ section h2 > button {
 ul {
   list-style: none;
 }
+/* .person-list li {
+  margin: 1rem 0;
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+} */
+/* Modify the li to align the edit and delete buttons */
 .person-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin: 1rem 0;
   padding: 0.5rem 2rem;
   cursor: pointer;
 }
 
+#btn-editPerson, #btn-deletePerson {
+  background-color: var(--very-light-orange);
+  padding: .5rem;
+  border: 0;
+  border-radius: .25rem;
+}
+
+#btn-editPerson:hover, #btn-deletePerson:hover {
+  background-color: var(--dark-orange);
+  color: whitesmoke;
+  padding: .5rem;
+  border: 0;
+  border-radius: .25rem;
+}
+
 .person-list li:hover {
-  background-color: var(--light-orange);
+  background-color: var(--very-light-orange);
 }
 .person-list li.selected {
   background-color: var(--light-orange);
@@ -99,18 +123,44 @@ ul {
 }
 
 .idea-list li.idea {
-  border: 1px solid #222;
+  /* border: 1px solid #222; */
   border-radius: var(--radii);
   margin: 1rem 0;
+  padding: .5rem;
   display: grid;
   /*usenamedgridareas*/
-  grid-template-areas: 'tab top' 'tab bottom';
-  grid-template-columns: 1fr 4fr;
+  grid-template-areas: 'tab top' 'tab bottom' 'tab action' ;
+  grid-template-columns: 1fr 2.5fr .5fr;
+  column-gap: 1rem;
   background-color: var(--very-light-orange);
   -webkit-border-radius: var(--radii);
   -moz-border-radius: var(--radii);
   -ms-border-radius: var(--radii);
   -o-border-radius: var(--radii);
+}
+
+#btn-editIdea:hover,
+#btn-deleteIdea:hover {
+  background-color: var(--dark-orange);
+  color: whitesmoke;
+}
+
+#btn-editIdea,
+#btn-deleteIdea {
+  background-color: var(--light-orange);
+  width: 3rem;
+  padding: .5rem;
+  border: 0;
+  border-radius: .25rem;
+  margin: auto;
+}
+
+#btn-editIdea {
+  /* grid-area: tab; */
+}
+
+#btn-deleteIdea {
+  /* grid-area: bottom; */
 }
 .idea-list .idea label {
   font-size: 0.8rem;

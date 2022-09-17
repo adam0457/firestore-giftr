@@ -188,8 +188,14 @@ const GIFTR = {
     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
     //Use the number of the birth-month less 1 as the index for the months array
     return `<li data-id="${person.id}" class="person">
-            <p class="name">${person.name}</p>
-            <p class="dob">${dob}</p>
+            <div>
+                <p class="name">${person.name}</p>
+                <p class="dob">${dob}</p>
+            </div>
+            <div>
+              <button id="btn-editPerson">Edit</button>
+              <button id="btn-deletePerson">Delete</button>
+            </div>    
           </li>`;
   }).join('');
   },
@@ -227,9 +233,13 @@ const GIFTR = {
   buildListIdeas: (ideas) => {
     GIFTR.ideaList.innerHTML = ideas.map(item => {
       return ` <li class="idea" data-id="">
-                    <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
-                    <p class="title">${item.idea}</p>
-                    <p class="location">${item.location}</p>
+                  
+                        <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                        <p class="title">${item.idea}</p>
+                        <p class="location">${item.location}</p>
+                        <button id="btn-editIdea">Edit</button>
+                        <button id="btn-deleteIdea">Delete</button>
+                                
               </li>`
     });
   },
