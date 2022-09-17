@@ -25,6 +25,7 @@ const GIFTR = {
   month: null,
   day: null,
   people:[],
+ 
   db:null,
   init: () => {
     GIFTR.addListeners();
@@ -49,11 +50,13 @@ const GIFTR = {
       let title = document.getElementById('title').value;
       let location = document.getElementById('location').value;
       if(!location || !title) return;
+      const personRef = doc(GIFTR.db, `/people/${GIFTR.selectedPersonId}`);
       const giftIdea = {
         'idea': title,
         'location': location,
-        'person-id': GIFTR.selectedPersonId
+        'person-id': personRef
       };
+      console.log(`The id of the person selected is ${GIFTR.selectedPersonId}`);
 
       try {
         const docRef = await addDoc(collection(GIFTR.db, 'gift-ideas'), giftIdea );
@@ -69,12 +72,32 @@ const GIFTR = {
         giftIdea.id = docRef.id;
         //4. ADD the new HTML to the <ul> using the new object
         // GIFTR.showPerson(person);
+        GIFTR.showAddedGift(giftIdea);
       } catch (err) {
         console.error('Error adding document: ', err);
         //do you want to stay on the dialog?
         //display a mesage to the user about the problem
       }
       
+  },
+
+  showAddedGift: (gift) => {
+    let li = document.getElementById(gift.id);
+    if(li){      
+      //replace the existing li with this new HTML
+      li.outerHTML = `<li class="idea" data-id="">
+                          <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                          <p class="title">${gift.idea}</p>
+                          <p class="location">${gift.location}</p>
+                      </li>`;
+    }else{
+        li = `<li class="idea" data-id="">
+                  <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                  <p class="title">${gift.idea}</p>
+                  <p class="location">${gift.location}</p>
+              </li>`;
+      document.querySelector('ul.idea-list').innerHTML += li;
+  }
   },
   
   savePerson: async(ev) => {
@@ -197,6 +220,7 @@ const GIFTR = {
         const id = doc.id;
         ideas.push({id, ...data});
       });
+      console.log(ideas);
 
       GIFTR.buildListIdeas(ideas);
   },
