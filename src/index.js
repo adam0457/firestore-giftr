@@ -6,7 +6,7 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { query, where,getFirestore, collection, doc, getDocs, addDoc, setDoc, getDoc } from 'firebase/firestore';
+import { query, where,getFirestore, onSnapshot, collection, doc, getDocs, addDoc, setDoc, getDoc } from 'firebase/firestore';
 
 const GIFTR = {
    /** My global variables */  
@@ -38,6 +38,7 @@ const GIFTR = {
     let app = initializeApp(GIFTR.firebaseConfig);
     GIFTR.db = getFirestore(app); 
     GIFTR.getPeople();
+    // GIFTR.getInitListPeople();
   },  
   
   addListeners:() => {
@@ -178,7 +179,8 @@ const GIFTR = {
       console.log(`Person ${GIFTR.name} added to database`);
       person.id = docRef.id;
       //4. ADD the new HTML to the <ul> using the new object
-      GIFTR.showPerson(person);
+     // GIFTR.showPerson(person); 
+     //I no longer need the showPerson to display the newly added person because the onsnapshot is doing the job for me
     } catch (err) {
       console.error('Error adding document: ', err);
       //do you want to stay on the dialog?
@@ -187,41 +189,41 @@ const GIFTR = {
 
   },
 
-  showPerson: (person) => {
-    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    let li = document.getElementById(person.id);
-    if(li){
-      //update on screen
-      const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
-      //Use the number of the birth-month less 1 as the index for the months array
-      //replace the existing li with this new HTML
-      li.outerHTML = `<li data-id="${person.id}" class="person">
-                        <div>
-                            <p class="name">${person.name}</p>
-                            <p class="dob">${dob}</p>
-                        </div>
-                        <div>
-                        <button class="edit" id="btn-editPerson">Edit</button>
-                        <button class="delete" id="btn-deletePerson">Delete</button>
-                      </div> 
-                      </li>`;
-    }else{
-      //add to screen
-      const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
-      //Use the number of the birth-month less 1 as the index for the months array
-      li = `<li data-id="${person.id}" class="person">
-                <div>
-                    <p class="name">${person.name}</p>
-                    <p class="dob">${dob}</p>
-                </div>
-                <div>
-                    <button class="edit" id="btn-editPerson">Edit</button>
-                    <button class="delete" id="btn-deletePerson">Delete</button>
-                </div> 
-            </li>`;
-      document.querySelector('ul.person-list').innerHTML += li;
-  }
-  },
+  // showPerson: (person) => {
+  //   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  //   let li = document.getElementById(person.id);
+  //   if(li){
+  //     //update on screen
+  //     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
+  //     //Use the number of the birth-month less 1 as the index for the months array
+  //     //replace the existing li with this new HTML
+  //     li.outerHTML = `<li data-id="${person.id}" class="person">
+  //                       <div>
+  //                           <p class="name">${person.name}</p>
+  //                           <p class="dob">${dob}</p>
+  //                       </div>
+  //                       <div>
+  //                       <button class="edit" id="btn-editPerson">Edit</button>
+  //                       <button class="delete" id="btn-deletePerson">Delete</button>
+  //                     </div> 
+  //                     </li>`;
+  //   }else{
+  //     //add to screen
+  //     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
+  //     //Use the number of the birth-month less 1 as the index for the months array
+  //     li = `<li data-id="${person.id}" class="person">
+  //               <div>
+  //                   <p class="name">${person.name}</p>
+  //                   <p class="dob">${dob}</p>
+  //               </div>
+  //               <div>
+  //                   <button class="edit" id="btn-editPerson">Edit</button>
+  //                   <button class="delete" id="btn-deletePerson">Delete</button>
+  //               </div> 
+  //           </li>`;
+  //     document.querySelector('ul.person-list').innerHTML += li;
+  // }
+  // },
 
   hideOverlay:(ev)=>{
     // ev.preventDefault();
@@ -307,6 +309,7 @@ const GIFTR = {
             const collectionRef = collection(GIFTR.db, 'people');
             const docRef = doc(collectionRef, GIFTR.selectedPersonId); //Get a reference of the current person
             await setDoc(docRef, person);
+          
             // reset the fields in the dialog after the update
             document.getElementById('name').value = '';
             document.getElementById('month').value = '';
@@ -319,15 +322,38 @@ const GIFTR = {
       }
   },
 
-  getPeople:async()=>{
-      const querySnapshot = await getDocs(collection(GIFTR.db, 'people'));
-      querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const id = doc.id;
-      GIFTR.people.push({id, ...data});
-  });
-  GIFTR.buildPeople(GIFTR.people);
+  getPeople:()=>{
+      const peopleRef = collection(GIFTR.db, 'people'); //Get a reference of the collection of people
+    
+      onSnapshot(
+        peopleRef,
+        (snapshot)=>{
+          console.log('the snapshot is triggered');
+          GIFTR.people = []; //Empty my global list of people when the snapshot is triggered
+        
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const id = doc.id;
+            
+            GIFTR.people.push({id, ...data}); //Fill my global list of people with the updated version
+          })
+          GIFTR.buildPeople(GIFTR.people); //Call the buildPeople to update the html
+        },
+        (err)=>{console.error('something happen', err)}
+      );      
   },
+
+  /*----------- the initial get list people ------*/
+
+  // getInitListPeople:async()=>{
+  //   const querySnapshot = await getDocs(collection(GIFTR.db, 'people'));
+  //       querySnapshot.forEach((doc) => {
+  //       const data = doc.data();
+  //       const id = doc.id;
+  //       GIFTR.people.push({id, ...data});
+  //   });
+  //   GIFTR.buildPeople(GIFTR.people);
+  // },
 
   buildPeople:(people)=>{  
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -378,7 +404,8 @@ const GIFTR = {
   handleSelectedIdea:async(ev)=>{
     let selectedLi = ev.target.closest('li');
     // Retrieve the info of the current Idea
-    GIFTR.selectedGiftId = selectedLi.getAttribute('data-id');
+    //Put the id of the current gift in a global variable so I can access it in the editGiftIdea function
+    GIFTR.selectedGiftId = selectedLi.getAttribute('data-id'); 
   
     const collectionRef = collection(GIFTR.db, 'gift-ideas');
     const docRef = doc(collectionRef, GIFTR.selectedGiftId );
