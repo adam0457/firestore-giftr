@@ -48,7 +48,7 @@ const GIFTR = {
       document.getElementById('btnAddPerson').addEventListener('click', GIFTR.handleBtnAddPerson);
       document.getElementById('btnAddIdea').addEventListener('click', GIFTR.handleBtnAddIdea);
       document.getElementById('btnSavePerson').addEventListener('click', GIFTR.handleBtnSavePerson);
-      document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.saveGiftIdea);
+      document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.handleBtnSaveIdea);
       // document.getElementById('btn-editPerson').addEventListener('click', GIFTR.showEditDialog);
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
       GIFTR.ideaList.addEventListener('click', GIFTR.handleSelectedIdea );
@@ -58,7 +58,40 @@ const GIFTR = {
     console.log('this is a test to edit');
   },
 
-  saveGiftIdea: async(ev) => {
+  handleBtnSaveIdea:(ev)=>{
+    if(ev.target.hasAttribute('data-id')){ //if the save button has the attribute data-id, we will do an edit if not we will add
+      GIFTR.editGiftIdea() ;
+    }else{
+        GIFTR.saveGiftIdea();
+    }
+  },
+
+  editGiftIdea:async()=>{
+      let title = document.getElementById('title').value;
+      let location = document.getElementById('location').value; 
+    // we're getting a reference of the current person related to the gift
+      const personRef = doc(GIFTR.db, `/people/${GIFTR.selectedPersonId}`); 
+      const giftIdea = {
+        'idea': title,
+        'location': location,
+        'person-id': personRef
+      };
+      try{
+          const collectionRef = collection(GIFTR.db, 'gift-ideas');
+          const docRef = doc(collectionRef, GIFTR.selectedGiftId); //Get a reference of the current gift idea
+          await setDoc(docRef, giftIdea);
+          // reset the fields in the dialog after the update
+          document.getElementById('title').value = '';
+          document.getElementById('location').value = '';
+          // hide the dialog and the overlay
+          GIFTR.hideOverlay();  
+
+      }catch(err){
+        console.error('Error editing document: ', err);
+      }
+  },
+
+  saveGiftIdea: async() => {
       let title = document.getElementById('title').value;
       let location = document.getElementById('location').value;
       if(!location || !title) return;
@@ -213,9 +246,17 @@ const GIFTR = {
       document.querySelector('.overlay').classList.add('active');
       //I want to check which overlay to open depending on which button has been clicked
       if(action === 'addPerson'){
+        //Add the title Add Person to the h2 of the dialog
+        document.querySelector('#dlgPerson h2').textContent = 'Add Person';
+         // Make sure the fields are empty before adding new contents
+          document.getElementById('name').value = '';
+          document.getElementById('month').value = '';
+          document.getElementById('day').value = '';
         document.getElementById('dlgPerson').classList.add('active');
 
       }else if(action === 'editPerson'){
+        //Add the title Edit Person to the h2 of the dialog
+        document.querySelector('#dlgPerson h2').textContent = 'Edit Person';
         document.getElementById('dlgPerson').classList.add('active');      
 
         //Filling the fields name, month and day with values from the choice (person) object
@@ -227,13 +268,24 @@ const GIFTR = {
         document.getElementById('btnSavePerson').setAttribute('data-id','edit');
 
       }else if(action === 'addIdea'){
+        //Add the title Add Idea to the h2 of the dialog
+        document.querySelector('#dlgIdea h2').textContent = 'Add Idea';
+        // Make sure the fields are empty before adding new contents
+        document.getElementById('title').value = '';
+        document.getElementById('location').value = '';
         document.getElementById('dlgIdea').classList.add('active');
 
       }else if(action === 'editIdea'){
+        //Add the title Edit Idea to the h2 of the dialog
+        document.querySelector('#dlgIdea h2').textContent = 'Edit Idea';
         document.getElementById('dlgIdea').classList.add('active');
         //Retrieve the infos about the current idea to fill the fields in the dialog
         GIFTR.giftTitle.value = choice.idea;
         GIFTR.giftLocation.value = choice.location;
+
+         //Add a value to the data-id attribute of the save button in the dialog
+        document.getElementById('btnSaveIdea').setAttribute('data-id','edit');
+
 
       }
       //const id = ev.target.id === 'btnAddPerson' ? 'dlgPerson' : 'dlgIdea';
@@ -242,6 +294,7 @@ const GIFTR = {
   },
 
   editPerson:async()=>{
+    //Get the values from the fields to create a person object that we will pass to setDoc to update the current person
       let name = document.getElementById('name').value;
       let month = document.getElementById('month').value;
       let day = document.getElementById('day').value;      
@@ -252,7 +305,7 @@ const GIFTR = {
       };
       try{
             const collectionRef = collection(GIFTR.db, 'people');
-            const docRef = doc(collectionRef, GIFTR.selectedPersonId);
+            const docRef = doc(collectionRef, GIFTR.selectedPersonId); //Get a reference of the current person
             await setDoc(docRef, person);
             // reset the fields in the dialog after the update
             document.getElementById('name').value = '';
