@@ -6,7 +6,7 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { query, where,getFirestore, onSnapshot, collection, doc, getDocs, addDoc, setDoc, getDoc } from 'firebase/firestore';
+import { query, where,getFirestore, onSnapshot, collection, doc, getDocs, addDoc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 
 const GIFTR = {
    /** My global variables */  
@@ -342,19 +342,7 @@ const GIFTR = {
         (err)=>{console.error('something happen', err)}
       );      
   },
-
-  /*----------- the initial get list people ------*/
-
-  // getInitListPeople:async()=>{
-  //   const querySnapshot = await getDocs(collection(GIFTR.db, 'people'));
-  //       querySnapshot.forEach((doc) => {
-  //       const data = doc.data();
-  //       const id = doc.id;
-  //       GIFTR.people.push({id, ...data});
-  //   });
-  //   GIFTR.buildPeople(GIFTR.people);
-  // },
-
+  
   buildPeople:(people)=>{  
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   GIFTR.personList.innerHTML = people.map(person=>{
@@ -395,8 +383,11 @@ const GIFTR = {
           GIFTR.showOverlay('editPerson', selectedPerson);
 
     }else if(ev.target.classList.contains('delete')){
-      console.log('that is the delete button');
-      console.log(ev.target);
+      
+      //Show a confirmation message before deleting the current person
+      if (window.confirm("Do you really want to delete this person ?")) {
+        await deleteDoc(doc(GIFTR.db, 'people', GIFTR.selectedPersonId));
+      }
     }
     
   },
