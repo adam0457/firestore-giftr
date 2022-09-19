@@ -23,7 +23,10 @@ const GIFTR = {
   personName: document.querySelector('#dlgPerson #name'),
   personMonth: document.querySelector('#dlgPerson #month'),
   personDay: document.querySelector('#dlgPerson #day'),
+  giftTitle: document.querySelector('#dlgIdea #title'),
+  giftLocation:document.querySelector('#dlgIdea #location'),
   selectedPersonId:null,
+  selectedGiftId:null,
   name: null,
   month: null,
   day: null,
@@ -48,6 +51,7 @@ const GIFTR = {
       document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.saveGiftIdea);
       // document.getElementById('btn-editPerson').addEventListener('click', GIFTR.showEditDialog);
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
+      GIFTR.ideaList.addEventListener('click', GIFTR.handleSelectedIdea );
   }, 
 
   showEditDialog:(ev)=>{
@@ -227,6 +231,9 @@ const GIFTR = {
 
       }else if(action === 'editIdea'){
         document.getElementById('dlgIdea').classList.add('active');
+        //Retrieve the infos about the current idea to fill the fields in the dialog
+        GIFTR.giftTitle.value = choice.idea;
+        GIFTR.giftLocation.value = choice.location;
 
       }
       //const id = ev.target.id === 'btnAddPerson' ? 'dlgPerson' : 'dlgIdea';
@@ -314,6 +321,31 @@ const GIFTR = {
     }
     
   },
+
+  handleSelectedIdea:async(ev)=>{
+    let selectedLi = ev.target.closest('li');
+    // Retrieve the info of the current Idea
+    GIFTR.selectedGiftId = selectedLi.getAttribute('data-id');
+  
+    const collectionRef = collection(GIFTR.db, 'gift-ideas');
+    const docRef = doc(collectionRef, GIFTR.selectedGiftId );
+    const docSnap = await getDoc(docRef);
+    let currentGift = docSnap.data(); //This is an object that contains the info of the current gift    
+
+    if(ev.target.classList.contains('edit')){
+      //I want to call the showOverlay function with the info of the current gift idea
+          GIFTR.showOverlay('editIdea', currentGift);
+
+    }else if(ev.target.classList.contains('delete')){
+      console.log('that is the delete button');
+      
+    }
+    
+  },
+
+  handleBtnEditIdea:(ev)=>{
+      console.log(ev.target);
+  },
   getIdeas: async(id)=>{
           //get an actual reference to the person document 
       const personRef = doc(collection(GIFTR.db, 'people'), id);
@@ -337,13 +369,13 @@ const GIFTR = {
   },
   buildListIdeas: (ideas) => {
     GIFTR.ideaList.innerHTML = ideas.map(item => {
-      return ` <li class="idea" data-id="">
+      return ` <li class="idea" data-id=${item.id} >
                   
                         <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
                         <p class="title">${item.idea}</p>
                         <p class="location">${item.location}</p>
-                        <button id="btn-editIdea">Edit</button>
-                        <button id="btn-deleteIdea">Delete</button>
+                        <button class="edit" id="btn-editIdea">Edit</button>
+                        <button class="delete" id="btn-deleteIdea">Delete</button>
                                 
               </li>`
     });
