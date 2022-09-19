@@ -6,7 +6,7 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { query, where,getFirestore, collection, doc, getDocs, addDoc } from 'firebase/firestore';
+import { query, where,getFirestore, collection, doc, getDocs, addDoc, setDoc, getDoc } from 'firebase/firestore';
 
 const GIFTR = {
    /** My global variables */  
@@ -20,6 +20,9 @@ const GIFTR = {
   },
   personList:document.querySelector('ul.person-list'),
   ideaList: document.querySelector('ul.idea-list'),
+  personName: document.querySelector('#dlgPerson #name'),
+  personMonth: document.querySelector('#dlgPerson #month'),
+  personDay: document.querySelector('#dlgPerson #day'),
   selectedPersonId:null,
   name: null,
   month: null,
@@ -39,12 +42,17 @@ const GIFTR = {
       document.getElementById('btnCancelIdea').addEventListener('click', GIFTR.hideOverlay);
       // document.querySelector('.overlay').addEventListener('click', GIFTR.hideOverlay);
 
-      document.getElementById('btnAddPerson').addEventListener('click', GIFTR.showOverlay);
-      document.getElementById('btnAddIdea').addEventListener('click', GIFTR.showOverlay);
-      document.getElementById('btnSavePerson').addEventListener('click', GIFTR.savePerson);
+      document.getElementById('btnAddPerson').addEventListener('click', GIFTR.handleBtnAddPerson);
+      document.getElementById('btnAddIdea').addEventListener('click', GIFTR.handleBtnAddIdea);
+      document.getElementById('btnSavePerson').addEventListener('click', GIFTR.handleBtnSavePerson);
       document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.saveGiftIdea);
-      GIFTR.personList.addEventListener('click', GIFTR.showListGifts);
+      // document.getElementById('btn-editPerson').addEventListener('click', GIFTR.showEditDialog);
+      GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
   }, 
+
+  showEditDialog:(ev)=>{
+    console.log('this is a test to edit');
+  },
 
   saveGiftIdea: async(ev) => {
       let title = document.getElementById('title').value;
@@ -99,6 +107,14 @@ const GIFTR = {
       document.querySelector('ul.idea-list').innerHTML += li;
   }
   },
+
+  handleBtnSavePerson:(ev)=>{
+    if(ev.target.hasAttribute('data-id')){ //if the save button has the attribute data-id, we will do an edit if not we will add
+      GIFTR.editPerson() ;
+    }else{
+        GIFTR.savePerson();
+    }
+  },
   
   savePerson: async(ev) => {
     GIFTR.name = document.getElementById('name').value;
@@ -143,16 +159,28 @@ const GIFTR = {
       //Use the number of the birth-month less 1 as the index for the months array
       //replace the existing li with this new HTML
       li.outerHTML = `<li data-id="${person.id}" class="person">
-              <p class="name">${person.name}</p>
-              <p class="dob">${dob}</p>
-            </li>`;
+                        <div>
+                            <p class="name">${person.name}</p>
+                            <p class="dob">${dob}</p>
+                        </div>
+                        <div>
+                        <button class="edit" id="btn-editPerson">Edit</button>
+                        <button class="delete" id="btn-deletePerson">Delete</button>
+                      </div> 
+                      </li>`;
     }else{
       //add to screen
       const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
       //Use the number of the birth-month less 1 as the index for the months array
       li = `<li data-id="${person.id}" class="person">
-              <p class="name">${person.name}</p>
-              <p class="dob">${dob}</p>
+                <div>
+                    <p class="name">${person.name}</p>
+                    <p class="dob">${dob}</p>
+                </div>
+                <div>
+                    <button class="edit" id="btn-editPerson">Edit</button>
+                    <button class="delete" id="btn-deletePerson">Delete</button>
+                </div> 
             </li>`;
       document.querySelector('ul.person-list').innerHTML += li;
   }
@@ -160,16 +188,75 @@ const GIFTR = {
 
   hideOverlay:(ev)=>{
     // ev.preventDefault();
+    //remove the data-id attribute from the save button in the dialog
+    document.getElementById('btnSavePerson').removeAttribute('data-id');
     document.querySelector('.overlay').classList.remove('active');
     document.querySelectorAll('.overlay dialog').forEach((dialog) => dialog.classList.remove('active'));
   },
 
-  showOverlay:(ev)=>{
-      ev.preventDefault();
+  handleBtnAddPerson: (ev) => {
+    ev.preventDefault();
+    GIFTR.showOverlay('addPerson');
+  },
+
+  handleBtnAddIdea: (ev) => {
+    ev.preventDefault();
+    GIFTR.showOverlay('addIdea');
+  },
+
+  //The showOverlay will open a dialog for adding or editing a person or an idea 
+  showOverlay:(action, choice)=>{     //The choice can be a person selected or an idea selected
       document.querySelector('.overlay').classList.add('active');
-      const id = ev.target.id === 'btnAddPerson' ? 'dlgPerson' : 'dlgIdea';
+      //I want to check which overlay to open depending on which button has been clicked
+      if(action === 'addPerson'){
+        document.getElementById('dlgPerson').classList.add('active');
+
+      }else if(action === 'editPerson'){
+        document.getElementById('dlgPerson').classList.add('active');      
+
+        //Filling the fields name, month and day with values from the choice (person) object
+        GIFTR.personName.value = choice.name;
+        GIFTR.personMonth.value = choice['birth-month'];
+        GIFTR.personDay.value = choice['birth-day'];
+
+        //Add a value to the data-id attribute of the save button in the dialog
+        document.getElementById('btnSavePerson').setAttribute('data-id','edit');
+
+      }else if(action === 'addIdea'){
+        document.getElementById('dlgIdea').classList.add('active');
+
+      }else if(action === 'editIdea'){
+        document.getElementById('dlgIdea').classList.add('active');
+
+      }
+      //const id = ev.target.id === 'btnAddPerson' ? 'dlgPerson' : 'dlgIdea';
       //TODO: check that person is selected before adding an idea
-      document.getElementById(id).classList.add('active');
+     // document.getElementById(id).classList.add('active');
+  },
+
+  editPerson:async()=>{
+      let name = document.getElementById('name').value;
+      let month = document.getElementById('month').value;
+      let day = document.getElementById('day').value;      
+      const person = {
+        'name':name,
+        'birth-month': month,
+        'birth-day': day
+      };
+      try{
+            const collectionRef = collection(GIFTR.db, 'people');
+            const docRef = doc(collectionRef, GIFTR.selectedPersonId);
+            await setDoc(docRef, person);
+            // reset the fields in the dialog after the update
+            document.getElementById('name').value = '';
+            document.getElementById('month').value = '';
+            document.getElementById('day').value = '';
+            // hide the dialog and the overlay
+            GIFTR.hideOverlay();
+
+      }catch(err){
+        console.error('Error editing document: ', err);
+      }
   },
 
   getPeople:async()=>{
@@ -193,21 +280,39 @@ const GIFTR = {
                 <p class="dob">${dob}</p>
             </div>
             <div>
-              <button id="btn-editPerson">Edit</button>
-              <button id="btn-deletePerson">Delete</button>
+              <button class="edit" id="btn-editPerson">Edit</button>
+              <button class="delete" id="btn-deletePerson">Delete</button>
             </div>    
           </li>`;
   }).join('');
   },
 
-  showListGifts: (ev) => {
-    let selectedPerson = ev.target.closest('li');
-    GIFTR.selectedPersonId = selectedPerson.getAttribute('data-id');    
+  handleSelectedPerson: async(ev) => {
+    let selectedLi = ev.target.closest('li');
+    
+    // Retrieve the info of the selected person
+    GIFTR.selectedPersonId = selectedLi.getAttribute('data-id');
+    const collectionRef = collection(GIFTR.db, 'people');
+    const docRef = doc(collectionRef, GIFTR.selectedPersonId );
+    const docSnap = await getDoc(docRef);
+    let selectedPerson = docSnap.data(); //This is an object that contains the info of the selected person
+
+    // Unselect any other li in the list of people    
     let listeLi = document.querySelectorAll('.person-list li')
     listeLi.forEach(item =>  (item.classList.contains('selected')) ? item.classList.remove('selected') : "");    
-    selectedPerson.classList.add('selected');
+    selectedLi.classList.add('selected');
     //Call the list of ideas from firestore
     GIFTR.getIdeas(GIFTR.selectedPersonId);
+    
+    if(ev.target.classList.contains('edit')){
+      // I want to call the showOverlay function with the info of the selected person
+          GIFTR.showOverlay('editPerson', selectedPerson);
+
+    }else if(ev.target.classList.contains('delete')){
+      console.log('that is the delete button');
+      console.log(ev.target);
+    }
+    
   },
   getIdeas: async(id)=>{
           //get an actual reference to the person document 
@@ -226,7 +331,7 @@ const GIFTR = {
         const id = doc.id;
         ideas.push({id, ...data});
       });
-      console.log(ideas);
+      // console.log(ideas);
 
       GIFTR.buildListIdeas(ideas);
   },
