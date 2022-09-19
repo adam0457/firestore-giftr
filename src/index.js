@@ -118,7 +118,7 @@ const GIFTR = {
         giftIdea.id = docRef.id;
         //4. ADD the new HTML to the <ul> using the new object
         // GIFTR.showPerson(person);
-        GIFTR.showAddedGift(giftIdea);
+        //GIFTR.showAddedGift(giftIdea);
       } catch (err) {
         console.error('Error adding document: ', err);
         //do you want to stay on the dialog?
@@ -342,6 +342,55 @@ const GIFTR = {
         (err)=>{console.error('something happen', err)}
       );      
   },
+
+  getIdeas:(id)=>{
+     //get an actual reference to the current person  
+      const personRef = doc(collection(GIFTR.db, 'people'), id);
+      //A query to get the ideas for the current person
+      const giftQuery = query(collection(GIFTR.db, 'gift-ideas'),
+                          where('person-id', '==', personRef)  
+                        );
+      //Put a onSnapshot to the query
+      onSnapshot(       
+        giftQuery,
+        (snapshot)=>{
+          console.log('the gift snapshot is triggered');
+          let ideas = [];
+          snapshot.forEach(doc => {
+              const data = doc.data();
+              const id = doc.id;
+              console.log(data);
+              ideas.push({id, ...data});
+          });
+
+          GIFTR.buildListIdeas(ideas);
+        }
+        );
+  },
+
+  /*----- The initial getIdeas --------*/
+
+// getIdeas: async(id)=>{
+//     //get an actual reference to the person document 
+//       const personRef = doc(collection(GIFTR.db, 'people'), id);
+//       //then run a query where the `person-id` property matches the reference for the person
+//       const docs = query(
+//         collection(GIFTR.db, 'gift-ideas'),
+//         where('person-id', '==', personRef)
+//       );
+//       const querySnapshot = await getDocs(docs);
+//       let ideas = [];
+
+//       querySnapshot.forEach((doc) => { 
+//         //work with the resulting docs
+//         const data = doc.data();
+//         const id = doc.id;
+//         ideas.push({id, ...data});
+//       });
+//       // console.log(ideas);
+
+//       GIFTR.buildListIdeas(ideas);
+// },
   
   buildPeople:(people)=>{  
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -382,8 +431,7 @@ const GIFTR = {
       // I want to call the showOverlay function with the info of the selected person
           GIFTR.showOverlay('editPerson', selectedPerson);
 
-    }else if(ev.target.classList.contains('delete')){
-      
+    }else if(ev.target.classList.contains('delete')){      
       //Show a confirmation message before deleting the current person
       if (window.confirm("Do you really want to delete this person ?")) {
         await deleteDoc(doc(GIFTR.db, 'people', GIFTR.selectedPersonId));
@@ -408,7 +456,10 @@ const GIFTR = {
           GIFTR.showOverlay('editIdea', currentGift);
 
     }else if(ev.target.classList.contains('delete')){
-      console.log('that is the delete button');
+      //Show a confirmation message before deleting the current gift idea
+      if (window.confirm("Do you really want to delete this gift idea ?")) {
+        await deleteDoc(doc(GIFTR.db, 'gift-ideas', GIFTR.selectedGiftId));
+      }
       
     }
     
@@ -417,27 +468,7 @@ const GIFTR = {
   handleBtnEditIdea:(ev)=>{
       console.log(ev.target);
   },
-  getIdeas: async(id)=>{
-          //get an actual reference to the person document 
-      const personRef = doc(collection(GIFTR.db, 'people'), id);
-      //then run a query where the `person-id` property matches the reference for the person
-      const docs = query(
-        collection(GIFTR.db, 'gift-ideas'),
-        where('person-id', '==', personRef)
-      );
-      const querySnapshot = await getDocs(docs);
-      let ideas = [];
-
-      querySnapshot.forEach((doc) => { 
-        //work with the resulting docs
-        const data = doc.data();
-        const id = doc.id;
-        ideas.push({id, ...data});
-      });
-      // console.log(ideas);
-
-      GIFTR.buildListIdeas(ideas);
-  },
+  
   buildListIdeas: (ideas) => {
     GIFTR.ideaList.innerHTML = ideas.map(item => {
       return ` <li class="idea" data-id=${item.id} >
