@@ -476,17 +476,23 @@ const GIFTR = {
   },
   
   buildListIdeas: (ideas) => {
-    GIFTR.ideaList.innerHTML = ideas.map(item => {
-      return ` <li class="idea" data-id=${item.id} >
-                  
-                        <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
-                        <p class="title">${item.idea}</p>
-                        <p class="location">${item.location}</p>
-                        <button class="edit" id="btn-editIdea">Edit</button>
-                        <button class="delete" id="btn-deleteIdea">Delete</button>
-                                
-              </li>`
-    });
+    if(ideas.length>0){
+      GIFTR.ideaList.innerHTML = ideas.map(item => {
+        return ` <li class="idea" data-id=${item.id} >
+                    
+                          <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                          <p class="title">${item.idea}</p>
+                          <p class="location">${item.location}</p>
+                          <button class="edit" id="btn-editIdea">Edit</button>
+                          <button class="delete" id="btn-deleteIdea">Delete</button>
+                                  
+                </li>`
+      });
+
+    }else {
+          GIFTR.ideaList.innerHTML = `<h3 class="idea">No gift idea for this person!!!</h3>`
+    }
+    
   },
 };
 GIFTR.init();

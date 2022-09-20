@@ -140,6 +140,18 @@ ul {
   -o-border-radius: var(--radii);
 }
 
+.idea-list h3.idea{
+  border-radius: var(--radii);
+  margin: 1rem 0;
+  padding: 1rem;
+  text-align: center;  
+  background-color: var(--very-light-orange);
+  -webkit-border-radius: var(--radii);
+  -moz-border-radius: var(--radii);
+  -ms-border-radius: var(--radii);
+  -o-border-radius: var(--radii);
+}
+
 #btn-editIdea:hover,
 #btn-deleteIdea:hover {
   background-color: var(--dark-orange);
