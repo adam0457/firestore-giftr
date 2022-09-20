@@ -87,10 +87,11 @@ ul {
   margin: 1rem 0;
   padding: 0.5rem 2rem;
   cursor: pointer;
+  border-bottom: 2px solid var(--very-light-orange);
 }
 
 #btn-editPerson, #btn-deletePerson {
-  background-color: var(--very-light-orange);
+  background-color: var(--light-orange);
   padding: .5rem;
   border: 0;
   border-radius: .25rem;
@@ -108,7 +109,7 @@ ul {
   background-color: var(--very-light-orange);
 }
 .person-list li.selected {
-  background-color: var(--light-orange);
+  background-color: var(--very-light-orange);
 }
 .person-list p.name {
   font-size: 1.2rem;

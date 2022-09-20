@@ -44,7 +44,7 @@ const GIFTR = {
   addListeners:() => {
       document.getElementById('btnCancelPerson').addEventListener('click', GIFTR.hideOverlay);
       document.getElementById('btnCancelIdea').addEventListener('click', GIFTR.hideOverlay);
-      // document.querySelector('.overlay').addEventListener('click', GIFTR.hideOverlay);
+      document.querySelector('.overlay').addEventListener('click', GIFTR.handleClickOutsideDlg);
 
       document.getElementById('btnAddPerson').addEventListener('click', GIFTR.handleBtnAddPerson);
       document.getElementById('btnAddIdea').addEventListener('click', GIFTR.handleBtnAddIdea);
@@ -54,6 +54,12 @@ const GIFTR = {
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
       GIFTR.ideaList.addEventListener('click', GIFTR.handleSelectedIdea );
   }, 
+
+  handleClickOutsideDlg: (ev) => {
+    if(ev.target.classList.contains('overlay')){
+        GIFTR.hideOverlay();
+    }
+  },
 
   showEditDialog:(ev)=>{
     console.log('this is a test to edit');
@@ -225,7 +231,7 @@ const GIFTR = {
   // }
   // },
 
-  hideOverlay:(ev)=>{
+  hideOverlay:()=>{
     // ev.preventDefault();
     //remove the data-id attribute from the save button in the dialog
     document.getElementById('btnSavePerson').removeAttribute('data-id');
