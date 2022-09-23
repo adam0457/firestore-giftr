@@ -38,7 +38,6 @@ const GIFTR = {
     let app = initializeApp(GIFTR.firebaseConfig);
     GIFTR.db = getFirestore(app); 
     GIFTR.getPeople();
-    // GIFTR.getInitListPeople();
   },  
   
   addListeners:() => {
@@ -50,7 +49,6 @@ const GIFTR = {
       document.getElementById('btnAddIdea').addEventListener('click', GIFTR.handleBtnAddIdea);
       document.getElementById('btnSavePerson').addEventListener('click', GIFTR.handleBtnSavePerson);
       document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.handleBtnSaveIdea);
-      // document.getElementById('btn-editPerson').addEventListener('click', GIFTR.showEditDialog);
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
       GIFTR.ideaList.addEventListener('click', GIFTR.handleSelectedIdea );
   }, 
@@ -61,9 +59,9 @@ const GIFTR = {
     }
   },
 
-  showEditDialog:(ev)=>{
-    console.log('this is a test to edit');
-  },
+  // showEditDialog:(ev)=>{
+  //   console.log('this is a test to edit');
+  // },
 
   handleBtnSaveIdea:(ev)=>{
     if(ev.target.hasAttribute('data-id')){ //if the save button has the attribute data-id, we will do an edit if not we will add
@@ -118,17 +116,13 @@ const GIFTR = {
         document.getElementById('location').value = '';
         //2. hide the dialog and the overlay
         GIFTR.hideOverlay();
-        //3. display a message to the user about success 
-        // tellUser(`Person ${GIFTR.name} added to database`);
-        console.log(`Idea ${title} added to database`);
+        
+        // console.log(`Idea ${title} added to database`);
         giftIdea.id = docRef.id;
-        //4. ADD the new HTML to the <ul> using the new object
-        // GIFTR.showPerson(person);
-        //GIFTR.showAddedGift(giftIdea);
+        
       } catch (err) {
         console.error('Error adding document: ', err);
-        //do you want to stay on the dialog?
-        //display a mesage to the user about the problem
+        
       }
       
   },
@@ -180,60 +174,19 @@ const GIFTR = {
       document.getElementById('day').value = '';
       //2. hide the dialog and the overlay
       GIFTR.hideOverlay();
-      //3. display a message to the user about success 
-      // tellUser(`Person ${GIFTR.name} added to database`);
+      
       console.log(`Person ${GIFTR.name} added to database`);
-      person.id = docRef.id;
-      //4. ADD the new HTML to the <ul> using the new object
-     // GIFTR.showPerson(person); 
-     //I no longer need the showPerson to display the newly added person because the onsnapshot is doing the job for me
+      person.id = docRef.id;      
+     // The onsnapshot will update the html for me
     } catch (err) {
       console.error('Error adding document: ', err);
-      //do you want to stay on the dialog?
-      //display a mesage to the user about the problem
+      
     }
 
   },
 
-  // showPerson: (person) => {
-  //   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  //   let li = document.getElementById(person.id);
-  //   if(li){
-  //     //update on screen
-  //     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
-  //     //Use the number of the birth-month less 1 as the index for the months array
-  //     //replace the existing li with this new HTML
-  //     li.outerHTML = `<li data-id="${person.id}" class="person">
-  //                       <div>
-  //                           <p class="name">${person.name}</p>
-  //                           <p class="dob">${dob}</p>
-  //                       </div>
-  //                       <div>
-  //                       <button class="edit" id="btn-editPerson">Edit</button>
-  //                       <button class="delete" id="btn-deletePerson">Delete</button>
-  //                     </div> 
-  //                     </li>`;
-  //   }else{
-  //     //add to screen
-  //     const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
-  //     //Use the number of the birth-month less 1 as the index for the months array
-  //     li = `<li data-id="${person.id}" class="person">
-  //               <div>
-  //                   <p class="name">${person.name}</p>
-  //                   <p class="dob">${dob}</p>
-  //               </div>
-  //               <div>
-  //                   <button class="edit" id="btn-editPerson">Edit</button>
-  //                   <button class="delete" id="btn-deletePerson">Delete</button>
-  //               </div> 
-  //           </li>`;
-  //     document.querySelector('ul.person-list').innerHTML += li;
-  // }
-  // },
-
   hideOverlay:()=>{
-    // ev.preventDefault();
-    //remove the data-id attribute from the save button in the dialog
+    
     document.getElementById('btnSavePerson').removeAttribute('data-id');
     document.querySelector('.overlay').classList.remove('active');
     document.querySelectorAll('.overlay dialog').forEach((dialog) => dialog.classList.remove('active'));
@@ -294,11 +247,8 @@ const GIFTR = {
          //Add a value to the data-id attribute of the save button in the dialog
         document.getElementById('btnSaveIdea').setAttribute('data-id','edit');
 
-
       }
-      //const id = ev.target.id === 'btnAddPerson' ? 'dlgPerson' : 'dlgIdea';
-      //TODO: check that person is selected before adding an idea
-     // document.getElementById(id).classList.add('active');
+      
   },
 
   editPerson:async()=>{
@@ -372,31 +322,7 @@ const GIFTR = {
           GIFTR.buildListIdeas(ideas);
         }
         );
-  },
-
-  /*----- The initial getIdeas --------*/
-
-// getIdeas: async(id)=>{
-//     //get an actual reference to the person document 
-//       const personRef = doc(collection(GIFTR.db, 'people'), id);
-//       //then run a query where the `person-id` property matches the reference for the person
-//       const docs = query(
-//         collection(GIFTR.db, 'gift-ideas'),
-//         where('person-id', '==', personRef)
-//       );
-//       const querySnapshot = await getDocs(docs);
-//       let ideas = [];
-
-//       querySnapshot.forEach((doc) => { 
-//         //work with the resulting docs
-//         const data = doc.data();
-//         const id = doc.id;
-//         ideas.push({id, ...data});
-//       });
-//       // console.log(ideas);
-
-//       GIFTR.buildListIdeas(ideas);
-// },
+  }, 
   
   buildPeople:(people)=>{ 
   if(people.length > 0){ //Testing if there's people in the collection
