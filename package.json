@@ -1,5 +1,5 @@
 {
-  "name": "firestore-starter",
+  "name": "firestore-hybrid",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "build": "webpack"
   },
   "keywords": [],
-  "author": "Steve <steve@home.org>",
+  "author": "Vladymir Adam <adam0457@algonquinlive.com>",
   "license": "MIT",
   "dependencies": {
     "firebase": "^9.9.3",
