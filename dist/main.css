@@ -74,12 +74,7 @@ section h2 > button {
 ul {
   list-style: none;
 }
-/* .person-list li {
-  margin: 1rem 0;
-  padding: 0.5rem 2rem;
-  cursor: pointer;
-} */
-/* Modify the li to align the edit and delete buttons */
+
 .person-list li {
   display: flex;
   justify-content: space-between;
@@ -140,9 +135,10 @@ ul {
   -o-border-radius: var(--radii);
 }
 
-.idea-list h3.idea{
+.idea-list h3.idea,
+.person-list h3{
   border-radius: var(--radii);
-  margin: 1rem 0;
+  margin: 1rem;
   padding: 1rem;
   text-align: center;  
   background-color: var(--very-light-orange);

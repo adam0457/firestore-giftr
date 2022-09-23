@@ -59,10 +59,6 @@ const GIFTR = {
     }
   },
 
-  // showEditDialog:(ev)=>{
-  //   console.log('this is a test to edit');
-  // },
-
   handleBtnSaveIdea:(ev)=>{
     if(ev.target.hasAttribute('data-id')){ //if the save button has the attribute data-id, we will do an edit if not we will add
       GIFTR.editGiftIdea() ;
@@ -198,8 +194,8 @@ const GIFTR = {
   },
 
   handleBtnAddIdea: (ev) => {
-    ev.preventDefault();
-    GIFTR.showOverlay('addIdea');
+    ev.preventDefault();    
+    (GIFTR.selectedPersonId) ? GIFTR.showOverlay('addIdea'): alert('You have to add a person first!');
   },
 
   //The showOverlay will open a dialog for adding or editing a person or an idea 
@@ -349,7 +345,7 @@ const GIFTR = {
     GIFTR.getIdeas(GIFTR.selectedPersonId);    
   
   }else{
-    GIFTR.personList.innerHTML = `<h3 class="idea">You haven't added any person yet!!</h3>`
+    GIFTR.personList.innerHTML = `<h3>You haven't added any person yet!!</h3>`
   }
   
   },
