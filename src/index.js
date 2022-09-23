@@ -460,6 +460,8 @@ const GIFTR = {
 
   handleSelectedIdea:async(ev)=>{
     let selectedLi = ev.target.closest('li');
+    let ckbox = ev.target.closest('input');    
+
     // Retrieve the info of the current Idea
     //Put the id of the current gift in a global variable so I can access it in the editGiftIdea function
     GIFTR.selectedGiftId = selectedLi.getAttribute('data-id'); 
@@ -481,7 +483,10 @@ const GIFTR = {
     
       
     }
-    console.log(ev.target.value);
+    // Do something if the checkbox is checked or unchecked
+    if(ckbox){
+      console.log(ckbox.checked);
+    }
     
   },
 
