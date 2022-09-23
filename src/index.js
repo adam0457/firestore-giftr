@@ -398,22 +398,34 @@ const GIFTR = {
 //       GIFTR.buildListIdeas(ideas);
 // },
   
-  buildPeople:(people)=>{  
-  let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  GIFTR.personList.innerHTML = people.map(person=>{
-    const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
-    //Use the number of the birth-month less 1 as the index for the months array
-    return `<li data-id="${person.id}" class="person">
-            <div>
-                <p class="name">${person.name}</p>
-                <p class="dob">${dob}</p>
-            </div>
-            <div>
-              <button class="edit" id="btn-editPerson">Edit</button>
-              <button class="delete" id="btn-deletePerson">Delete</button>
-            </div>    
-          </li>`;
-  }).join('');
+  buildPeople:(people)=>{ 
+  if(people.length > 0){ //Testing if there's people in the collection
+      let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      GIFTR.personList.innerHTML = people.map(person=>{
+      const dob = `${months[person['birth-month']-1]} ${person['birth-day']}`;
+      //Use the number of the birth-month less 1 as the index for the months array
+      return `<li data-id="${person.id}" class="person">
+              <div>
+                  <p class="name">${person.name}</p>
+                  <p class="dob">${dob}</p>
+              </div>
+              <div>
+                <button class="edit" id="btn-editPerson">Edit</button>
+                <button class="delete" id="btn-deletePerson">Delete</button>
+              </div>    
+            </li>`;
+    }).join('');
+    //Get the first person in the list to be automatically selected
+    const firstLi = document.querySelector('.person-list li');    
+    firstLi.classList.add('selected');
+    // Get the ideas of the selected person to be displayed
+    GIFTR.selectedPersonId = firstLi.getAttribute('data-id');
+    GIFTR.getIdeas(GIFTR.selectedPersonId);    
+  
+  }else{
+    GIFTR.personList.innerHTML = `<h3 class="idea">You haven't added any person yet!!</h3>`
+  }
+  
   },
 
   handleSelectedPerson: async(ev) => {
@@ -466,8 +478,10 @@ const GIFTR = {
       if (window.confirm("Do you really want to delete this gift idea ?")) {
         await deleteDoc(doc(GIFTR.db, 'gift-ideas', GIFTR.selectedGiftId));
       }
+    
       
     }
+    console.log(ev.target.value);
     
   },
 
