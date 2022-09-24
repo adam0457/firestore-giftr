@@ -6,7 +6,7 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { query, where,getFirestore, onSnapshot, collection, doc, getDocs, addDoc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { query, where,getFirestore, onSnapshot, collection, doc, getDocs,updateDoc, addDoc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 
 const GIFTR = {
    /** My global variables */  
@@ -102,7 +102,7 @@ const GIFTR = {
         'location': location,
         'person-id': personRef
       };
-      console.log(`The id of the person selected is ${GIFTR.selectedPersonId}`);
+      // console.log(`The id of the person selected is ${GIFTR.selectedPersonId}`);
 
       try {
         const docRef = await addDoc(collection(GIFTR.db, 'gift-ideas'), giftIdea );
@@ -401,27 +401,23 @@ const GIFTR = {
       //Show a confirmation message before deleting the current gift idea
       if (window.confirm("Do you really want to delete this gift idea ?")) {
         await deleteDoc(doc(GIFTR.db, 'gift-ideas', GIFTR.selectedGiftId));
-      }
-    
-      
+      }      
     }
-    // Do something if the checkbox is checked or unchecked
-    if(ckbox){
-      console.log(ckbox.checked);
-    }
+    // Put the bought field to true or false depending on if the box is checked or unchecked
+    if(ckbox) await updateDoc(docRef, {'bought':ckbox.checked});
     
   },
 
-  handleBtnEditIdea:(ev)=>{
-      console.log(ev.target);
-  },
   
   buildListIdeas: (ideas) => {
     if(ideas.length>0){
       GIFTR.ideaList.innerHTML = ideas.map(item => {
+        //I want to check if the current gift is already bought                
+        let chkBoxInput = (item.bought) ? 'checked' : '';
+                
         return ` <li class="idea" data-id=${item.id} >
                     
-                          <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" /> Bought</label>
+                          <label for="chk-uniqueid"> <input type="checkbox" id="chk-uniqueid" ${chkBoxInput}  /> Bought</label>
                           <p class="title">${item.idea}</p>
                           <p class="location">${item.location}</p>
                           <button class="edit" id="btn-editIdea">Edit</button>
