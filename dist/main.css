@@ -338,6 +338,19 @@ dialog button:hover {
   color: whitesmoke;
 }
 
+footer {
+  position: fixed;
+  bottom: 0rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+  color: white;
+  padding: 1rem 0;
+  width: 100vw;
+  border-bottom: .25rem solid var(--dark-green);
+}
+
 @media only screen and (min-width:60em){
     main {
     flex-direction: row;
