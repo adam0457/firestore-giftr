@@ -37,30 +37,44 @@ header h2 {
   font-weight: 300;
   color: var(--dark-green);
 }
-main {
+/* main {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+} */
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
-main > section {
+/* main > section {
   flex-basis: 50%;
   flex-grow: 1;
   flex-shrink: 1;
-}
+} */
 section.ideas {
-  min-height: 100vh;
-  padding-left: 1rem;
-  border-left: 1px solid var(--light-green);
+  /* min-height: 100vh; */
+  /* padding-left: 1rem;
+  border-left: 1px solid var(--light-green); */
+  margin-top: 1rem;
+}
+
+.people {
+  min-width: 17rem;
 }
 section h2 {
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
   font-size: 2rem;
   color: var(--dark-green);
-  display: flex;
-  justify-content: space-between;
+  
 }
 section h2 > button {
-  margin-right: 4rem;
+  /* margin-right: 4rem; */
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
   background-color: #fff;
@@ -84,12 +98,19 @@ ul {
 
 .person-list li {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 0;
-  padding: 0.5rem 2rem;
+  margin: .25rem 0;
+  padding: 0.5rem;
   cursor: pointer;
   border-bottom: 2px solid var(--very-light-green);
+}
+
+.person-list li div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }
 
 #btn-editPerson, #btn-deletePerson {
@@ -271,4 +292,28 @@ dialog button {
 dialog button:hover {
   background-color: var(--dark-green);
   color: whitesmoke;
+}
+
+@media only screen and (min-width:60em){
+    main {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+
+  section.ideas {
+    min-height: 100vh;
+    padding-left: 1rem;
+    border-left: 1px solid var(--light-green);
+  }
+
+  .person-list li div:last-child {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+  }
+
+  
+  
 }
