@@ -1,5 +1,5 @@
 :root {  
-
+  --ultra-dark:#5d7d5a;
   --dark-green: #88B584;
   --light-green: #C2DCBC;
   --very-light-green: #E0EEDD;
@@ -37,30 +37,51 @@ header h2 {
   font-weight: 300;
   color: var(--dark-green);
 }
-main {
+/* main {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+} */
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
-main > section {
+/* main > section {
   flex-basis: 50%;
   flex-grow: 1;
   flex-shrink: 1;
+} */
+
+section.people {
+  background-color: var(--dark-green);
 }
 section.ideas {
-  min-height: 100vh;
-  padding-left: 1rem;
-  border-left: 1px solid var(--light-green);
+  /* min-height: 100vh; */
+  /* padding-left: 1rem;
+  border-left: 1px solid var(--light-green); */
+  margin-top: 1rem;
+  background-color: var(--ultra-dark);
+}
+
+.people, .ideas {
+  width: 22rem;
+  padding: 1rem;
 }
 section h2 {
-  font-size: 2rem;
-  color: var(--dark-green);
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content:space-between;
+  font-size: 2rem;
+  /* color: var(--dark-green); */
+  color: white;
+  
 }
 section h2 > button {
-  margin-right: 4rem;
+  /* margin-right: 4rem; */
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
   background-color: #fff;
@@ -73,7 +94,11 @@ section h2 > button {
   -o-border-radius: var(--radii);
 }
 
-section h2 > button:hover{
+section.people h2 > button:hover{
+  background-color: var(--ultra-dark);
+  color: whitesmoke;
+}
+section.ideas h2 > button:hover{
   background-color: var(--dark-green);
   color: whitesmoke;
 }
@@ -84,12 +109,19 @@ ul {
 
 .person-list li {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 1rem 0;
-  padding: 0.5rem 2rem;
+  margin: .25rem 0;
+  padding: 0.5rem;
   cursor: pointer;
   border-bottom: 2px solid var(--very-light-green);
+}
+
+.person-list li div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }
 
 #btn-editPerson, #btn-deletePerson {
@@ -122,7 +154,8 @@ ul {
   font-size: 0.8rem;
   line-height: 1rem;
   font-weight: 100;
-  color: #777;
+  /* color: #777; */
+  color: rgb(13, 13, 13);
 }
 
 .idea-list li.idea {
@@ -229,7 +262,8 @@ dialog {
 dialog.active {
   display: block;
   margin: auto;
-  width: 80vw;
+  /* width: 80vw; */
+  width: 20rem;
   height: 60vh;
 }
 dialog.active h2 {
@@ -239,11 +273,23 @@ dialog.active h2 {
   font-size: 2rem;
 }
 dialog.active p {
+  /* background-color: rebeccapurple; */
   display: flex;
   margin: 1rem 3rem;
   justify-content: flex-start;
   align-items: flex-start;
 }
+
+dialog.active p:last-child{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  gap: 1rem;
+  /* align-items: flex-start; */
+}
+
 dialog.active label {
   flex-basis: 20ch;
   font-size: 1rem;
@@ -256,7 +302,7 @@ dialog.active :is(input, button) {
   font-weight: inherit;
 }
 dialog button {
-  margin: 0 2rem;
+  /* margin: 0 2rem; */
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
   background-color: #fff;
@@ -271,4 +317,30 @@ dialog button {
 dialog button:hover {
   background-color: var(--dark-green);
   color: whitesmoke;
+}
+
+@media only screen and (min-width:60em){
+    main {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+
+  section.ideas {
+    min-height: 100vh;
+    padding-left: 1rem;
+    border-left: 1px solid var(--light-green);
+    margin-top: 0;
+    width: 25rem;
+  }
+
+  .person-list li div:last-child {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+  }
+
+  
+  
 }
