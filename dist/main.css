@@ -23,9 +23,15 @@ main {
   padding: 1rem 4rem;
 }
 header {
+  position: fixed;
+  min-width: 100vw;
+  top: 0px;
+  z-index: 1;
+
   /* background-color: var(--light-green); */
   background-color: #222;
   /* border-bottom: 0.1rem solid var(--dark-green); */
+  border-top: .25rem solid var(--dark-green);
   border-bottom: .25rem solid var(--dark-green);
 }
 header h1 {
@@ -49,6 +55,8 @@ header h2 {
 } */
 
 main {
+  position: relative;
+  top: 7rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -75,6 +83,7 @@ section.ideas {
 .people, .ideas {
   width: 17rem;
   padding: .5rem;
+  border-radius: .5rem;
 }
 section h2 {
   display: flex;
@@ -340,7 +349,8 @@ dialog button:hover {
   section.ideas {
     min-height: 100vh;
     padding-left: 1rem;
-    border-left: 1px solid var(--light-green);
+    /* border-left: 1px solid var(--light-green); */
+    border-left: .25rem solid #222;
     margin-top: 0;
     width: 25rem;
   }
