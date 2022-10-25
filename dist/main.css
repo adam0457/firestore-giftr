@@ -23,17 +23,21 @@ main {
   padding: 1rem 4rem;
 }
 header {
-  background-color: var(--light-green);
-  border-bottom: 0.1rem solid var(--dark-green);
+  /* background-color: var(--light-green); */
+  background-color: #222;
+  /* border-bottom: 0.1rem solid var(--dark-green); */
+  border-bottom: .25rem solid var(--dark-green);
 }
 header h1 {
-  font-size: 4rem;
+  /* font-size: 4rem; */
+  font-size: 2rem;
   font-weight: 500;
   color: #fff;
   text-shadow: 2px 2px 2px var(--dark-green);
 }
 header h2 {
-  font-size: 2.5rem;
+  /* font-size: 2.5rem; */
+  font-size: 1.5rem;
   font-weight: 300;
   color: var(--dark-green);
 }
@@ -63,13 +67,14 @@ section.ideas {
   /* min-height: 100vh; */
   /* padding-left: 1rem;
   border-left: 1px solid var(--light-green); */
+  
   margin-top: 1rem;
   background-color: var(--ultra-dark);
 }
 
 .people, .ideas {
   width: 17rem;
-  padding: 1rem;
+  padding: .5rem;
 }
 section h2 {
   display: flex;
@@ -105,6 +110,7 @@ section.ideas h2 > button:hover{
 
 ul {
   list-style: none;
+  
 }
 
 .person-list li {
@@ -162,12 +168,12 @@ ul {
   /* border: 1px solid #222; */
   border-radius: var(--radii);
   margin: 1rem 0;
-  padding: .5rem;
+  padding: .5rem .25rem;
   display: grid;
   /*usenamedgridareas*/
   grid-template-areas: 'tab top' 'tab bottom' 'tab action' ;
   grid-template-columns: 1fr 2.5fr .5fr;
-  column-gap: 1rem;
+  column-gap: .25rem;
   background-color: var(--very-light-green);
   -webkit-border-radius: var(--radii);
   -moz-border-radius: var(--radii);
@@ -198,6 +204,7 @@ ul {
 #btn-deleteIdea {
   background-color: var(--light-green);
   width: 3rem;
+  /* width: 2.5rem; */
   padding: .5rem;
   border: 0;
   border-radius: .25rem;
@@ -206,7 +213,7 @@ ul {
 
 .idea-list .idea label {
   font-size: 0.8rem;
-  line-height: 1rem;
+  /* line-height: 1rem; */
   font-weight: 100;
   padding: 0.5rem;
   color: #222;
@@ -220,8 +227,10 @@ ul {
   accent-color: var(--light-green);
 }
 .idea-list p.title {
-  font-size: 1.2rem;
-  line-height: 2rem;
+  /* font-size: 1.2rem; */
+  font-size: 1rem;
+  /* line-height: 2rem; */
+
   padding: 0.5rem;
   color: #222;
   background-color: #fff;
@@ -229,8 +238,9 @@ ul {
   grid-area: top;
 }
 .idea-list p.location {
-  font-size: 1rem;
-  line-height: 1rem;
+  /* font-size: 1rem; */
+  font-size: .8rem;
+  /* line-height: 1rem; */
   padding: 0.5rem;
   font-weight: 100;
   color: #555;
