@@ -277,6 +277,7 @@ dialog.active {
   margin: auto;
   width: 17rem;
   height: 60vh;
+  border-radius: .5rem;
 }
 dialog.active h2 {
   background-color: var(--dark-green);
@@ -312,6 +313,11 @@ dialog.active :is(input, button) {
   font-family: inherit;
   font-weight: inherit;
 }
+
+dialog input {
+  max-width: 10rem;
+}
+
 dialog button {
   /* margin: 0 2rem; */
   padding: 0.1rem 2rem;
