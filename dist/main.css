@@ -14,6 +14,7 @@
 html {
   font-size: 20px;
   font-family: sans-serif;
+  
 }
 body {
   min-height: 100vh;
@@ -47,12 +48,6 @@ header h2 {
   font-weight: 300;
   color: var(--dark-green);
 }
-/* main {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-} */
 
 main {
   position: relative;
@@ -62,20 +57,15 @@ main {
   justify-content: flex-start;
   align-items: center;
 }
-/* main > section {
-  flex-basis: 50%;
-  flex-grow: 1;
-  flex-shrink: 1;
-} */
 
 section.people {
   background-color: var(--dark-green);
 }
+.separator {
+  display: none;
+}
+
 section.ideas {
-  /* min-height: 100vh; */
-  /* padding-left: 1rem;
-  border-left: 1px solid var(--light-green); */
-  
   margin-top: 1rem;
   margin-bottom: 5rem;
   background-color: var(--ultra-dark);
@@ -97,6 +87,7 @@ section h2 {
 }
 section h2 > button {
   /* margin-right: 4rem; */
+  font-weight: bold;
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
   background-color: #fff;
@@ -145,6 +136,7 @@ ul {
   padding: .5rem;
   border: 0;
   border-radius: .25rem;
+  font-weight:500;
 }
 
 #btn-editPerson:hover, #btn-deletePerson:hover {
@@ -169,7 +161,7 @@ ul {
 .person-list p.dob {
   font-size: 0.8rem;
   line-height: 1rem;
-  font-weight: 100;
+  font-weight:500;
   /* color: #777; */
   color: rgb(13, 13, 13);
 }
@@ -219,6 +211,7 @@ ul {
   border: 0;
   border-radius: .25rem;
   margin: auto;
+  font-weight: 500;
 }
 
 .idea-list .idea label {
@@ -252,7 +245,7 @@ ul {
   font-size: .8rem;
   /* line-height: 1rem; */
   padding: 0.5rem;
-  font-weight: 100;
+  font-weight: 300;
   color: #555;
   background-color: #fff;
   border-bottom-right-radius: 0.3rem;
@@ -282,8 +275,7 @@ dialog {
 dialog.active {
   display: block;
   margin: auto;
-  /* width: 80vw; */
-  width: 20rem;
+  width: 17rem;
   height: 60vh;
 }
 dialog.active h2 {
@@ -293,10 +285,9 @@ dialog.active h2 {
   font-size: 2rem;
 }
 dialog.active p {
-  /* background-color: rebeccapurple; */
   display: flex;
-  margin: 1rem 3rem;
-  justify-content: flex-start;
+  margin: 1rem 1rem;
+  justify-content: space-between;
   align-items: flex-start;
 }
 
@@ -305,7 +296,7 @@ dialog.active p:last-child{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  /* margin: 0; */
   gap: 1rem;
   /* align-items: flex-start; */
 }
@@ -360,11 +351,16 @@ footer {
     gap: 3rem;
   }
 
+  section.people {
+    min-height: 75vh;
+    width: 25rem;
+  }
+
   section.ideas {
     min-height: 75vh;
     padding-left: 1rem;
     /* border-left: 1px solid var(--light-green); */
-    border-left: .25rem solid #222;
+    /* border-left: .25rem solid #222; */
     margin-top: 0;
     width: 25rem;
   }
@@ -373,6 +369,12 @@ footer {
     display: flex;
     flex-direction: row;
     gap: .5rem;
+  }
+
+  .separator {
+    display: block;
+    min-height: 75vh;
+    border-left: .25rem solid #222;
   }
 
   
