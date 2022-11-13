@@ -28,30 +28,49 @@ header {
   min-width: 100vw;
   top: 0px;
   z-index: 1;
-
-  /* background-color: var(--light-green); */
   background-color: #222;
-  /* border-bottom: 0.1rem solid var(--dark-green); */
   border-top: .25rem solid var(--dark-green);
   border-bottom: .25rem solid var(--dark-green);
 }
 header h1 {
-  /* font-size: 4rem; */
   font-size: 2rem;
   font-weight: 500;
   color: #fff;
   text-shadow: 2px 2px 2px var(--dark-green);
 }
 header h2 {
-  /* font-size: 2.5rem; */
   font-size: 1.5rem;
   font-weight: 300;
   color: var(--dark-green);
 }
 
+.signInOutBtn-container {
+  padding-top: 1rem;
+}
+
+.signIn, .signOut {
+  background-color: var(--ultra-dark);
+  color: white;
+  width: 4rem;
+  padding: .5rem;
+  border: 0;
+  border-radius: .25rem;
+  font-weight: 500;
+  display: none;
+}
+
+.signIn:hover, .signOut:hover {
+  background-color: var(--light-green);
+  color: #222;
+}
+
+.signIn.active, .signOut.active{
+  display: block;
+}
+
 main {
   position: relative;
-  top: 7rem;
+  top: 10rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -81,12 +100,10 @@ section h2 {
   flex-direction: row;
   justify-content:space-between;
   font-size: 2rem;
-  /* color: var(--dark-green); */
   color: white;
   
 }
 section h2 > button {
-  /* margin-right: 4rem; */
   font-weight: bold;
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
@@ -162,17 +179,14 @@ ul {
   font-size: 0.8rem;
   line-height: 1rem;
   font-weight:500;
-  /* color: #777; */
   color: rgb(13, 13, 13);
 }
 
 .idea-list li.idea {
-  /* border: 1px solid #222; */
   border-radius: var(--radii);
   margin: 1rem 0;
   padding: .5rem .25rem;
   display: grid;
-  /*usenamedgridareas*/
   grid-template-areas: 'tab top' 'tab bottom' 'tab action' ;
   grid-template-columns: 1fr 2.5fr .5fr;
   column-gap: .25rem;
@@ -206,7 +220,6 @@ ul {
 #btn-deleteIdea {
   background-color: var(--light-green);
   width: 3rem;
-  /* width: 2.5rem; */
   padding: .5rem;
   border: 0;
   border-radius: .25rem;
@@ -216,7 +229,6 @@ ul {
 
 .idea-list .idea label {
   font-size: 0.8rem;
-  /* line-height: 1rem; */
   font-weight: 100;
   padding: 0.5rem;
   color: #222;
@@ -230,10 +242,7 @@ ul {
   accent-color: var(--light-green);
 }
 .idea-list p.title {
-  /* font-size: 1.2rem; */
   font-size: 1rem;
-  /* line-height: 2rem; */
-
   padding: 0.5rem;
   color: #222;
   background-color: #fff;
@@ -241,9 +250,7 @@ ul {
   grid-area: top;
 }
 .idea-list p.location {
-  /* font-size: 1rem; */
   font-size: .8rem;
-  /* line-height: 1rem; */
   padding: 0.5rem;
   font-weight: 300;
   color: #555;
@@ -297,9 +304,7 @@ dialog.active p:last-child{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  /* margin: 0; */
   gap: 1rem;
-  /* align-items: flex-start; */
 }
 
 dialog.active label {
@@ -319,7 +324,6 @@ dialog input {
 }
 
 dialog button {
-  /* margin: 0 2rem; */
   padding: 0.1rem 2rem;
   border: 1px solid var(--dark-green);
   background-color: #fff;
@@ -350,6 +354,16 @@ footer {
 }
 
 @media only screen and (min-width:60em){
+
+  header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .signInOutBtn-container {
+    padding-top: 1rem;
+  }
     main {
     flex-direction: row;
     justify-content: center;
@@ -365,8 +379,6 @@ footer {
   section.ideas {
     min-height: 75vh;
     padding-left: 1rem;
-    /* border-left: 1px solid var(--light-green); */
-    /* border-left: .25rem solid #222; */
     margin-top: 0;
     width: 25rem;
   }
