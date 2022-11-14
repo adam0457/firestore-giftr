@@ -6,8 +6,11 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
+import { getAuth, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import { query, where,getFirestore, onSnapshot, collection, doc, getDocs,updateDoc, addDoc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 
+
+// My client secret for fire-giftr: 05a1813516c1d972ebf11ce8cba1b7450cdfa703
 const GIFTR = {
    /** My global variables */  
   firebaseConfig:{
@@ -18,6 +21,7 @@ const GIFTR = {
     messagingSenderId: "416768678849",
     appId: "1:416768678849:web:77f6c29fec81803b46ed40"
   },
+  
   personList:document.querySelector('ul.person-list'),
   ideaList: document.querySelector('ul.idea-list'),
   personName: document.querySelector('#dlgPerson #name'),
@@ -25,20 +29,60 @@ const GIFTR = {
   personDay: document.querySelector('#dlgPerson #day'),
   giftTitle: document.querySelector('#dlgIdea #title'),
   giftLocation:document.querySelector('#dlgIdea #location'),
+  signInBtn:document.querySelector('.signIn'),
+  signOutBtn:document.querySelector('.signOut'),
   selectedPersonId:null,
   selectedGiftId:null,
   name: null,
   month: null,
   day: null,
   people:[],
- 
   db:null,
+  auth:null,
+  provider:null,
+  token:null,
+
   init: () => {
     GIFTR.addListeners();
     let app = initializeApp(GIFTR.firebaseConfig);
     GIFTR.db = getFirestore(app); 
-    GIFTR.getPeople();
+    GIFTR.auth = getAuth();
+    GIFTR.auth.languageCode = 'fr';
+    GIFTR.provider = new GithubAuthProvider();
+    GIFTR.provider.setCustomParameters({'allow_signup': 'true'});
   },  
+
+  attemptLogin:()=>{
+    signInWithPopup(GIFTR.auth, GIFTR.provider)
+    .then((result) => {
+      //IF YOU USED TWITTER 
+      // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+      // You can use these server side with your app's credentials to access the Twitter API.
+      //IF YOU USED GITHUB PROVIDER 
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      GIFTR.token = credential.accessToken;
+
+      // The signed-in user info.
+      const user = result.user;
+      console.log(user)
+      GIFTR.getPeople();
+      GIFTR.signInBtn.classList.remove('active')
+      GIFTR.signOutBtn.classList.add('active')
+    
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GithubAuthProvider.credentialFromError(error);
+    });
+  },
+
+  logOut:() =>{
+    console.log("The user will be logged out")
+  },
   
   addListeners:() => {
       document.getElementById('btnCancelPerson').addEventListener('click', GIFTR.hideOverlay);
@@ -51,6 +95,9 @@ const GIFTR = {
       document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.handleBtnSaveIdea);
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);
       GIFTR.ideaList.addEventListener('click', GIFTR.handleSelectedIdea );
+
+      GIFTR.signInBtn.addEventListener('click', GIFTR.attemptLogin)
+      GIFTR.signOutBtn.addEventListener('click', GIFTR.logOut)
   }, 
 
   handleClickOutsideDlg: (ev) => {
