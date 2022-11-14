@@ -6,7 +6,7 @@
 
 'use strict';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GithubAuthProvider, signInWithPopup, signInWithCredential } from 'firebase/auth';
 import { query, where,getFirestore, onSnapshot, collection, doc, getDocs,updateDoc, addDoc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 
 
@@ -22,15 +22,18 @@ const GIFTR = {
     appId: "1:416768678849:web:77f6c29fec81803b46ed40"
   },
   
-  personList:document.querySelector('ul.person-list'),
-  ideaList: document.querySelector('ul.idea-list'),
-  personName: document.querySelector('#dlgPerson #name'),
-  personMonth: document.querySelector('#dlgPerson #month'),
-  personDay: document.querySelector('#dlgPerson #day'),
-  giftTitle: document.querySelector('#dlgIdea #title'),
-  giftLocation:document.querySelector('#dlgIdea #location'),
-  signInBtn:document.querySelector('.signIn'),
-  signOutBtn:document.querySelector('.signOut'),
+  personList: document.querySelector('ul.person-list'),
+  ideaList:   document.querySelector('ul.idea-list'),
+  personName:   document.querySelector('#dlgPerson #name'),
+  personMonth:  document.querySelector('#dlgPerson #month'),
+  personDay:  document.querySelector('#dlgPerson #day'),
+  giftTitle:  document.querySelector('#dlgIdea #title'),
+  giftLocation: document.querySelector('#dlgIdea #location'),
+  signInBtn:  document.querySelector('.signIn'),
+  signOutBtn: document.querySelector('.signOut'),
+  addPersonBtn: document.getElementById('btnAddPerson'),
+  addIdeaBtn: document.getElementById('btnAddIdea'),
+
   selectedPersonId:null,
   selectedGiftId:null,
   name: null,
@@ -41,6 +44,7 @@ const GIFTR = {
   auth:null,
   provider:null,
   token:null,
+  sessionStorageKey:'fire-giftr-user-token',
 
   init: () => {
     GIFTR.addListeners();
@@ -50,24 +54,24 @@ const GIFTR = {
     GIFTR.auth.languageCode = 'fr';
     GIFTR.provider = new GithubAuthProvider();
     GIFTR.provider.setCustomParameters({'allow_signup': 'true'});
+
+    //Check if the sessionStorage has a token
+    let storage = sessionStorage.getItem(GIFTR.sessionStorageKey)
+    if(storage){
+        GIFTR.validateWithToken(storage)
+    }
   },  
 
   attemptLogin:()=>{
     signInWithPopup(GIFTR.auth, GIFTR.provider)
     .then((result) => {
-      //IF YOU USED TWITTER 
-      // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-      // You can use these server side with your app's credentials to access the Twitter API.
-      //IF YOU USED GITHUB PROVIDER 
       const credential = GithubAuthProvider.credentialFromResult(result);
       GIFTR.token = credential.accessToken;
-
-      // The signed-in user info.
-      const user = result.user;
-      console.log(user)
-      GIFTR.getPeople();
-      GIFTR.signInBtn.classList.remove('active')
-      GIFTR.signOutBtn.classList.add('active')
+    
+      GIFTR.giveAccess();
+    
+      // Put the token in the sessionStorage
+        sessionStorage.setItem(GIFTR.sessionStorageKey, GIFTR.token)
     
     }).catch((error) => {
       // Handle Errors here.
@@ -79,9 +83,37 @@ const GIFTR = {
       const credential = GithubAuthProvider.credentialFromError(error);
     });
   },
+  // I will call giveAccess when the user passes the authentication process
+  giveAccess:()=>{ 
+    GIFTR.getPeople();
+    GIFTR.signInBtn.classList.remove('active');
+    GIFTR.signOutBtn.classList.add('active');
+    GIFTR.addPersonBtn.classList.add('active');
+    GIFTR.addIdeaBtn.classList.add('active');
+  },
+
+  validateWithToken:(token)=>{
+    const credential = GithubAuthProvider.credential(token);
+    signInWithCredential(GIFTR.auth, credential)
+      .then((result) => {
+        
+        GIFTR.giveAccess()
+
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      })
+  },
 
   logOut:() =>{
-    console.log("The user will be logged out")
+    GIFTR.signOutBtn.classList.remove('active');
+    GIFTR.signInBtn.classList.add('active');
+    GIFTR.addPersonBtn.classList.remove('active');
+    GIFTR.addIdeaBtn.classList.remove('active');
+    sessionStorage.removeItem(GIFTR.sessionStorageKey);
+    location.reload();
   },
   
   addListeners:() => {
@@ -89,8 +121,8 @@ const GIFTR = {
       document.getElementById('btnCancelIdea').addEventListener('click', GIFTR.hideOverlay);
       document.querySelector('.overlay').addEventListener('click', GIFTR.handleClickOutsideDlg);
 
-      document.getElementById('btnAddPerson').addEventListener('click', GIFTR.handleBtnAddPerson);
-      document.getElementById('btnAddIdea').addEventListener('click', GIFTR.handleBtnAddIdea);
+      GIFTR.addPersonBtn.addEventListener('click', GIFTR.handleBtnAddPerson);
+      GIFTR.addIdeaBtn.addEventListener('click', GIFTR.handleBtnAddIdea);
       document.getElementById('btnSavePerson').addEventListener('click', GIFTR.handleBtnSavePerson);
       document.getElementById('btnSaveIdea').addEventListener('click', GIFTR.handleBtnSaveIdea);
       GIFTR.personList.addEventListener('click', GIFTR.handleSelectedPerson);

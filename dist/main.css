@@ -115,7 +115,12 @@ section h2 > button {
   -moz-border-radius: var(--radii);
   -ms-border-radius: var(--radii);
   -o-border-radius: var(--radii);
+  display: none;
 }
+
+section h2 > button.active {
+  display: block;
+} 
 
 section.people h2 > button:hover{
   background-color: var(--ultra-dark);
