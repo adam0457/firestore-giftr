@@ -45,6 +45,7 @@ const GIFTR = {
   provider:null,
   token:null,
   sessionStorageKey:'fire-giftr-user-token',
+  currentUserId: null,
 
   init: () => {
     GIFTR.addListeners();
@@ -67,8 +68,19 @@ const GIFTR = {
     .then((result) => {
       const credential = GithubAuthProvider.credentialFromResult(result);
       GIFTR.token = credential.accessToken;
-    
       GIFTR.giveAccess();
+
+      //Put the user in the database
+      const user = result.user;
+      GIFTR.currentUserId = user.uid
+      //call setDoc to add/update the user document in the `users` collection 
+      const usersColRef = collection(GIFTR.db, 'users');
+      setDoc(doc(usersColRef, user.uid), {
+        displayName: user.displayName,
+        email:user.email
+      }, {merge:true}); 
+      
+   
     
       // Put the token in the sessionStorage
         sessionStorage.setItem(GIFTR.sessionStorageKey, GIFTR.token)
@@ -78,11 +90,20 @@ const GIFTR = {
       const errorCode = error.code;
       const errorMessage = error.message;
       // The email of the user's account used.
-      const email = error.customData.email;
+      // const email = error.customData.email;
       // The AuthCredential type that was used.
       const credential = GithubAuthProvider.credentialFromError(error);
     });
   },
+
+  getUser:  ()=>{
+      // const ref =  doc(GIFTR.db, 'users', GIFTR.currentUserId);
+      const ref =  doc(GIFTR.db, `/users/${GIFTR.currentUserId}`);
+      console.log(ref)
+      // const personRef = doc(collection(GIFTR.db, 'people'), id);
+      return ref; 
+  },
+
   // I will call giveAccess when the user passes the authentication process
   giveAccess:()=>{ 
     GIFTR.getPeople();
@@ -96,7 +117,8 @@ const GIFTR = {
     const credential = GithubAuthProvider.credential(token);
     signInWithCredential(GIFTR.auth, credential)
       .then((result) => {
-        
+        console.log(`From sessionStorage: ${result.user.uid}`)
+        GIFTR.currentUserId = result.user.uid 
         GIFTR.giveAccess()
 
       })
@@ -230,6 +252,8 @@ const GIFTR = {
   },
   
   savePerson: async(ev) => {
+    let userRef = GIFTR.getUser()
+    console.log(userRef)
     GIFTR.name = document.getElementById('name').value;
     GIFTR.month = document.getElementById('month').value;
     GIFTR.day = document.getElementById('day').value;
@@ -237,7 +261,8 @@ const GIFTR = {
     const person = {
       'name': GIFTR.name,
       'birth-month': GIFTR.month,
-      'birth-day': GIFTR.day
+      'birth-day': GIFTR.day,
+      'owner': userRef
     };
 
     try {
@@ -355,6 +380,8 @@ const GIFTR = {
 
   getPeople:()=>{
       const peopleRef = collection(GIFTR.db, 'people'); //Get a reference of the collection of people
+        let refUser = GIFTR.getUser()
+      console.log(refUser)
     
       onSnapshot(
         peopleRef,
@@ -377,6 +404,7 @@ const GIFTR = {
   getIdeas:(id)=>{
      //get an actual reference to the current person  
       const personRef = doc(collection(GIFTR.db, 'people'), id);
+      console.log(personRef)
       //A query to get the ideas for the current person
       const giftQuery = query(collection(GIFTR.db, 'gift-ideas'),
                           where('person-id', '==', personRef)  
