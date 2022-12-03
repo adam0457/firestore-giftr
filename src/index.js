@@ -68,7 +68,6 @@ const GIFTR = {
     .then((result) => {
       const credential = GithubAuthProvider.credentialFromResult(result);
       GIFTR.token = credential.accessToken;
-      GIFTR.giveAccess();
 
       //Put the user in the database
       const user = result.user;
@@ -79,7 +78,9 @@ const GIFTR = {
         displayName: user.displayName,
         email:user.email
       }, {merge:true}); 
-      
+
+      //giveAccess will call the getPeople
+      GIFTR.giveAccess();
    
     
       // Put the token in the sessionStorage
@@ -97,10 +98,7 @@ const GIFTR = {
   },
 
   getUser:  ()=>{
-      // const ref =  doc(GIFTR.db, 'users', GIFTR.currentUserId);
       const ref =  doc(GIFTR.db, `/users/${GIFTR.currentUserId}`);
-      console.log(ref)
-      // const personRef = doc(collection(GIFTR.db, 'people'), id);
       return ref; 
   },
 
@@ -117,7 +115,6 @@ const GIFTR = {
     const credential = GithubAuthProvider.credential(token);
     signInWithCredential(GIFTR.auth, credential)
       .then((result) => {
-        console.log(`From sessionStorage: ${result.user.uid}`)
         GIFTR.currentUserId = result.user.uid 
         GIFTR.giveAccess()
 
@@ -379,12 +376,14 @@ const GIFTR = {
   },
 
   getPeople:()=>{
-      const peopleRef = collection(GIFTR.db, 'people'); //Get a reference of the collection of people
-        let refUser = GIFTR.getUser()
-      console.log(refUser)
-    
+        let refUser = GIFTR.getUser() //A reference to the current user
+      // A query for the people which have the current user as the owner
+      const q = query(
+        collection(GIFTR.db, 'people'),
+        where("owner", "==", refUser)
+      );
       onSnapshot(
-        peopleRef,
+        q,
         (snapshot)=>{
           console.log('the snapshot is triggered');
           GIFTR.people = []; //Empty my global list of people when the snapshot is triggered
@@ -404,7 +403,6 @@ const GIFTR = {
   getIdeas:(id)=>{
      //get an actual reference to the current person  
       const personRef = doc(collection(GIFTR.db, 'people'), id);
-      console.log(personRef)
       //A query to get the ideas for the current person
       const giftQuery = query(collection(GIFTR.db, 'gift-ideas'),
                           where('person-id', '==', personRef)  
